@@ -73,11 +73,9 @@ public class CaixaEletronico {
         mensagem = mensagem + String.valueOf(quantidadeNotas.get(50)) + "\nNotas de 100: ";
         mensagem = mensagem + String.valueOf(quantidadeNotas.get(100));
 
-        controleSaldo.removerNotas(5, quantidadeNotas.get(5));
-        controleSaldo.removerNotas(10, quantidadeNotas.get(10));
-        controleSaldo.removerNotas(20, quantidadeNotas.get(20));
-        controleSaldo.removerNotas(50, quantidadeNotas.get(50));
-        controleSaldo.removerNotas(100, quantidadeNotas.get(100));
+        quantidadeNotas.entrySet().stream().forEach((entry) -> {
+            controleSaldo.removerNotas(entry.getKey(), entry.getValue());
+        });
 
         this.quantidadeSaques += 1;
         this.valorTotalSaques += quantiaOriginal;
