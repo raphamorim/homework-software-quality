@@ -9,7 +9,6 @@ public class TrabalhoA2 {
         Scanner teclado = new Scanner(System.in);
         CaixaEletronico ce;
         int opcao;
-        float saldoIni;
         
         ce = new CaixaEletronico();
 

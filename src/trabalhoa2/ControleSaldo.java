@@ -16,7 +16,7 @@ public class ControleSaldo {
     }
 
     public void removerNotas(int valor, int quantidade) {
-        listaNotas.put(valor, listaNotas.get(valor) - quantidade);
+        listaNotas.put(valor, Math.max(0, listaNotas.get(valor) - quantidade));
     }
 
     public int obterSaldo() {

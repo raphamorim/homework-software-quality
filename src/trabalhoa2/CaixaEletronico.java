@@ -1,8 +1,11 @@
 package trabalhoa2;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class CaixaEletronico {
 
-    private ControleSaldo controleSaldo;
+    private final ControleSaldo controleSaldo;
     private int quantidadeSaques;
     private float valorTotalSaques;
 
@@ -34,92 +37,50 @@ public class CaixaEletronico {
     }
 
     public String sacar(int quantiaOriginal) {
-
-        String retorno = "";
-        int quantia = quantiaOriginal;
-        if (quantia > 0 && controleSaldo.obterSaldo() >= quantia) {
-            int qtdNota5 = 0;
-            int qtdNota10 = 0;
-            int qtdNota20 = 0;
-            int qtdNota50 = 0;
-            int qtdNota100 = 0;
-
-            if (quantia >= 100) {
-                qtdNota100 = (int) Math.floor(quantia / 100);
-
-                if (controleSaldo.obterQuantidadeNotas(100) < qtdNota100) {
-                    qtdNota100 = controleSaldo.obterQuantidadeNotas(100);
-                }
-
-                quantia = quantia - qtdNota100 * 100;
+        int quantia = quantiaOriginal;        
+        Map<Integer, Integer> quantidadeNotas = new LinkedHashMap();
+        quantidadeNotas.put(100, 0);
+        quantidadeNotas.put(50, 0);
+        quantidadeNotas.put(20, 0);
+        quantidadeNotas.put(10, 0);
+        quantidadeNotas.put(5, 0);
+        
+        if (quantia <= 0 || controleSaldo.obterSaldo() < quantia) {
+            return "\nQuantia inválida ou saldo insuficiente";
+        }
+        
+        for (Map.Entry<Integer, Integer> entry : quantidadeNotas.entrySet()) {
+            if (quantia < entry.getValue()) {
+                break;
             }
-
-            if (quantia >= 50) {
-                qtdNota50 = (int) Math.floor(quantia / 50);
-
-                if (controleSaldo.obterQuantidadeNotas(50) < qtdNota50) {
-                    qtdNota50 = controleSaldo.obterQuantidadeNotas(50);
-                }
-
-                quantia = quantia - qtdNota50 * 50;
-            }
-
-            if (quantia >= 20) {
-                qtdNota20 = (int) Math.floor(quantia / 20);
-
-                if (controleSaldo.obterQuantidadeNotas(20) < qtdNota20) {
-                    qtdNota20 = controleSaldo.obterQuantidadeNotas(20);
-                }
-
-                quantia = quantia - qtdNota20 * 20;
-            }
-            if (quantia >= 10) {
-                qtdNota10 = (int) Math.floor(quantia / 10);
-
-                if (controleSaldo.obterQuantidadeNotas(10) < qtdNota10) {
-                    qtdNota10 = controleSaldo.obterQuantidadeNotas(10);
-                }
-
-                quantia = quantia - qtdNota10 * 10;
-            }
-            if (quantia >= 5) {
-                qtdNota5 = (int) Math.floor(quantia / 5);
-
-                if (controleSaldo.obterQuantidadeNotas(5) < qtdNota5) {
-                    qtdNota5 = controleSaldo.obterQuantidadeNotas(5);
-                }
-
-                quantia = quantia - qtdNota5 * 5;
-            }
-
-            if (quantia == 0) {
-                retorno = "\n---------------------------------------";
-                retorno = retorno + "\nCaixa Eletrônico - Saque";
-                retorno = retorno + "\n---------------------------------------";
-                retorno = retorno + "\nSaque realiazado com sucesso! ";
-                retorno = retorno + "\nTotal notas de 5: ";
-                retorno = retorno + String.valueOf(qtdNota5) + "\nTotal notas de 10: ";
-                retorno = retorno + String.valueOf(qtdNota10) + "\nTotal notas de 20: ";
-                retorno = retorno + String.valueOf(qtdNota20) + "\nTotal notas de 50: ";
-                retorno = retorno + String.valueOf(qtdNota50) + "\nTotal notas de 100: ";
-                retorno = retorno + String.valueOf(qtdNota100) + ".";
-
-                this.quantidadeSaques += 1;
-                this.valorTotalSaques += quantiaOriginal;
-                controleSaldo.removerNotas(5, qtdNota5);
-                controleSaldo.removerNotas(10, qtdNota10);
-                controleSaldo.removerNotas(20, qtdNota20);
-                controleSaldo.removerNotas(50, qtdNota50);
-                controleSaldo.removerNotas(100, qtdNota100);
-
-            } else {
-                retorno = "\nQuantidade de células não é múltiplo do valor solicitado";
-            }
-
-        } else {
-            retorno = "\nQuantia inválida ou saldo insuficiente";
+            int calculo = (int) Math.floor(quantia / entry.getKey());
+            quantidadeNotas.put(entry.getKey(), calculo);
+            quantia = quantia - (calculo * entry.getKey());
         }
 
-        return retorno;
+        if (quantia > 0) {
+            return "\nQuantidade de células não é múltiplo do valor solicitado";
+        }
+
+        String mensagem = "";
+        mensagem = "\nCaixa Eletrônico - Saque";
+        mensagem = mensagem + "\n---------------------------------------";
+        mensagem = mensagem + "\nSaque realiazado com sucesso! ";
+        mensagem = mensagem + "\nNotas de 5: ";
+        mensagem = mensagem + String.valueOf(quantidadeNotas.get(5)) + "\nNotas de 10: ";
+        mensagem = mensagem + String.valueOf(quantidadeNotas.get(10)) + "\nNotas de 20: ";
+        mensagem = mensagem + String.valueOf(quantidadeNotas.get(20)) + "\nNotas de 50: ";
+        mensagem = mensagem + String.valueOf(quantidadeNotas.get(50)) + "\nNotas de 100: ";
+        mensagem = mensagem + String.valueOf(quantidadeNotas.get(100));
+
+        controleSaldo.removerNotas(5, quantidadeNotas.get(5));
+        controleSaldo.removerNotas(10, quantidadeNotas.get(10));
+        controleSaldo.removerNotas(20, quantidadeNotas.get(20));
+        controleSaldo.removerNotas(50, quantidadeNotas.get(50));
+        controleSaldo.removerNotas(100, quantidadeNotas.get(100));
+
+        this.quantidadeSaques += 1;
+        this.valorTotalSaques += quantiaOriginal;
+        return mensagem;
     }
 }
