@@ -1,11 +1,11 @@
 package trabalhoa2;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ControleSaldo {
 
-    private Map<Integer, Integer> listaNotas = new HashMap();
+    public Map<Integer, Integer> listaNotas = new LinkedHashMap();
 
     public ControleSaldo() {
         inicializarListaNotas();

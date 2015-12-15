@@ -76,7 +76,7 @@ public class TrabalhoA2 {
                         break;
 
                 case 3: // consultar saldo
-                        System.out.println(ce.getSaldo());
+                        System.out.println(ce.exibirSaldo());
                         break;
                     
                 default: // opcao invalida
